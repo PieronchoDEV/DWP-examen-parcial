@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block pageContent %}
+            <h1 class="mt-3 mb-3">Productos</h1>
+            
+            <a class="btn btn-success text-white mb-3" data-bs-toggle="modal" data-bs-target="#nuevoProducto">Nuevo <i class="fa-brands fa-product-hunt"></i></a>
+            <a class="btn btn-success text-white mb-3" data-bs-toggle="modal" data-bs-target="#asignarTienda">Asignar Tienda <i class="fa-solid fa-store"></i></a>
+                                    
+            <div>
+                <table class="table table-bordered table-hover" id="usersTable" style="font-size: 12px;">
+                    <thead class="table-dark">
+                        <th scope="col">Descripcion</th>
+                        <th scope="col">Codigo</th>
+                        <th scope="col">Precio de venta</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Tienda distribuidora</th>
+                        <th scope="col">Eliminar</th>
+                    </thead>
+                    <tbody>
+                        {% for productoUnitario in productosTotales %}
+                        <tr>
+                            <td>{{ productoUnitario.descripcion }}</td>
+                            <td>{{ productoUnitario.codigo }}</td>
+                            <td>{{ productoUnitario.precioDeVenta }}</td>
+                            <td>{{ productoUnitario.cantidad }}</td>
+                            <td>{{ productoUnitario.tiendaRelacionada.direccion }}</td>
+                            <td class="text-center"><a class="btn btn-danger" href="{% url 'gestionTienda:eliminarProducto' productoUnitario.id %}"><i class="fa-solid fa-trash-can"></i></a></td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+{% endblock %}
+
+{% block modalContent %}
+<!-- Nuevo Producto modal window -->
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="nuevoProducto">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form action="{% url 'gestionTienda:productos' %}" method="post">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Nuevo producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 mt-3">
+                        <div class="col-12">
+                            <label>Descripcion</label>
+                            <input type="text" class="form-control" name="nuevoDescripcion" id="nuevoDescripcion" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label>Precio de Venta</label>
+                            <input type="text" class="form-control" name="nuevoPrecio" id="nuevoPrecio" required>
+                        </div>
+                        <div class="col-6">
+                            <label>Cantidad</label>
+                            <input type="text" class="form-control" name="nuevoCantidad" id="nuevoCantidad" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Asignar Tienda modal window -->
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="asignarTienda">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form action="{% url 'gestionTienda:asignarTienda' %}" method="post">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Asignar Tienda</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 mt-3">
+                        <div class="col-6">
+                            <label>Seleccionar producto</label>
+                            <select class="form-select" name="productoSeleccionado" required>
+                                <option value=""></option>
+                                {% for productoInfo in productosTotales %}
+                                <option value="{{ productoInfo.id }}">{{ productoInfo.descripcion }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label>Seleccionar Tienda</label>
+                            <select class="form-select" name="tiendaSeleccionado" required>
+                                <option value=""></option>
+                                {% for tiendaInfo in tiendaTotales %}
+                                <option value="{{ tiendaInfo.id }}">{{ tiendaInfo.direccion }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
